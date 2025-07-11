@@ -28,6 +28,12 @@ export default function ResponsePane({
 }) {
   const printRef = useRef();
 
+  const displaySections = [
+    "Detailed Lesson Content",
+    "Suggested Classroom Activities",
+    "Assessment Questions",
+  ];
+
   return (
     <Card className="w-full p-6 space-y-4 h-full flex flex-col">
       <div className="flex justify-between items-center">
@@ -49,7 +55,10 @@ export default function ResponsePane({
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto" ref={printRef}>
+      <div
+        className="flex-1 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent max-w-full shadow-inner"
+        ref={printRef}
+      >
         {loading ? (
           <Skeleton className="h-[500px] w-full" />
         ) : error ? (
@@ -58,18 +67,18 @@ export default function ResponsePane({
           </Alert>
         ) : result ? (
           <Accordion type="multiple" className="w-full">
-            {Object.entries(result).map(([section, content], idx) => (
+            {displaySections.map((title, idx) => (
               <AccordionItem key={idx} value={`section-${idx}`}>
-                <AccordionTrigger>{section}</AccordionTrigger>
+                <AccordionTrigger>{title}</AccordionTrigger>
                 <AccordionContent>
                   {editMode ? (
                     <Textarea
-                      value={content}
-                      onChange={(e) => (result[section] = e.target.value)}
+                      value={result[title] || ""}
+                      onChange={(e) => (result[title] = e.target.value)}
                     />
                   ) : (
                     <p className="whitespace-pre-wrap text-sm text-muted-foreground">
-                      {content}
+                      {result[title]}
                     </p>
                   )}
                 </AccordionContent>
@@ -77,7 +86,7 @@ export default function ResponsePane({
             ))}
           </Accordion>
         ) : (
-          <Card className="text-muted italic text-center p-6">
+          <Card className="italic text-center p-6">
             Your lesson plan will appear here.
           </Card>
         )}
