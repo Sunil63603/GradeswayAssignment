@@ -56,7 +56,7 @@ export default function ResponsePane({
       </div>
 
       <div
-        className="flex-1 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent max-w-full shadow-inner"
+        className="flex-1 overflow-y-auto max-w-full bg-muted/40 p-4 rounded-md shadow-inner custom-scroll"
         ref={printRef}
       >
         {loading ? (
@@ -66,7 +66,10 @@ export default function ResponsePane({
             <AlertTitle>{error}</AlertTitle>
           </Alert>
         ) : result ? (
-          <Accordion type="multiple" className="w-full">
+          <Accordion
+            type="multiple"
+            className="w-full bg-white rounded-md p-4 shadow-sm"
+          >
             {displaySections.map((title, idx) => (
               <AccordionItem key={idx} value={`section-${idx}`}>
                 <AccordionTrigger>{title}</AccordionTrigger>

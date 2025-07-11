@@ -45,7 +45,7 @@ export default function LessonForm({ onGenerate }) {
   };
 
   return (
-    <Card className="w-full p-6 space-y-4 h-full max-w-full overflow-y-auto overflow-x-hidden custom-scroll">
+    <Card className="w-full h-full max-w-full p-6 space-y-4 overflow-y-auto overflow-x-hidden no-scrollbar  rounded-md shadow-inner">
       <CardTitle className="text-xl font-bold">✏️ Create Lesson Plan</CardTitle>
 
       <div className="space-y-4">
@@ -103,7 +103,10 @@ export default function LessonForm({ onGenerate }) {
 
         <div className="space-y-2">
           <Label>Lesson Outline</Label>
-          <Accordion type="multiple" className="w-full">
+          <Accordion
+            type="multiple"
+            className="w-full bg-white rounded-md p-4 shadow-sm"
+          >
             {form.outline.map((step, index) => (
               <AccordionItem key={index} value={`step-${index}`}>
                 <AccordionTrigger>Step {index + 1}</AccordionTrigger>
