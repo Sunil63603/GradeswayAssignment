@@ -14,25 +14,23 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRef } from "react";
+import { sections } from "@/app/page";
 
 export default function ResponsePane({
-  loading,
-  error,
   result,
+  loadingSections,
+  errorSections,
   editMode,
   setEditMode,
   prompt,
   setPrompt,
   onPromptSubmit,
   onDownload,
+  onRetry,
+  openSections,
+  setOpenSections,
 }) {
   const printRef = useRef();
-
-  const displaySections = [
-    "Detailed Lesson Content",
-    "Suggested Classroom Activities",
-    "Assessment Questions",
-  ];
 
   return (
     <Card className="w-full p-6 space-y-4 h-full flex flex-col">
@@ -56,57 +54,73 @@ export default function ResponsePane({
       </div>
 
       <div
-        className="flex-1 overflow-y-auto max-w-full bg-muted/40 p-4 rounded-md shadow-inner custom-scroll"
+        className="flex-1 overflow-y-auto max-w-full bg-muted/40 p-4 rounded-md shadow-inner no-scrollbar"
         ref={printRef}
       >
-        {loading ? (
-          <Skeleton className="h-[500px] w-full" />
-        ) : error ? (
-          <Alert variant="destructive">
-            <AlertTitle>{error}</AlertTitle>
-          </Alert>
-        ) : result ? (
-          <Accordion
-            type="multiple"
-            className="w-full bg-white rounded-md p-4 shadow-sm"
-          >
-            {displaySections.map((title, idx) => (
-              <AccordionItem key={idx} value={`section-${idx}`}>
-                <AccordionTrigger>{title}</AccordionTrigger>
-                <AccordionContent>
-                  {editMode ? (
+        <Accordion
+          type="multiple"
+          value={openSections}
+          onValueChange={setOpenSections}
+          className="w-full bg-white rounded-md p-4 shadow-sm"
+        >
+          {sections.map((title, idx) => (
+            <AccordionItem key={idx} value={`section-${idx}`}>
+              <AccordionTrigger>{title}</AccordionTrigger>
+              <AccordionContent>
+                {loadingSections?.[title] ? (
+                  <div className="space-y-2">
+                    <Skeleton className="h-[100px] w-full" />
+                    <p className="text-sm text-muted-foreground text-center">
+                      Generating {title} ...
+                    </p>
+                  </div>
+                ) : errorSections?.[title] ? (
+                  <Alert variant="destructive" className="flex flex-col gap-2">
+                    <AlertTitle>{errorSections[title]}</AlertTitle>
+                    <Button size="sm" onClick={() => onRetry(title)}>
+                      Retry
+                    </Button>
+                  </Alert>
+                ) : result?.[title] ? (
+                  editMode ? (
                     <Textarea
                       value={result[title] || ""}
-                      onChange={(e) => (result[title] = e.target.value)}
+                      onChange={(e) => {
+                        result[title] = e.target.value;
+                      }}
                     />
                   ) : (
                     <p className="whitespace-pre-wrap text-sm text-muted-foreground">
                       {result[title]}
                     </p>
-                  )}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        ) : (
-          <Card className="italic text-center p-6">
-            Your lesson plan will appear here.
-          </Card>
-        )}
+                  )
+                ) : (
+                  <p className="italic text-sm text-muted-foreground">
+                    No content yet.
+                  </p>
+                )}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
       </div>
 
       <form
         onSubmit={(e) => {
           e.preventDefault();
           onPromptSubmit(prompt);
+          setPrompt("");
         }}
         className="mt-4"
       >
-        <Input
-          placeholder="Type your prompt…"
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-        />
+        <div className="flex items-center justify-center">
+          <Input
+            placeholder="Type your prompt…"
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+          />
+          <Button type="submit">Send</Button>
+        </div>
       </form>
     </Card>
   );
