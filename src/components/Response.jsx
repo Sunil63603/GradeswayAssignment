@@ -35,9 +35,7 @@ export default function ResponsePane({
   return (
     <Card className="w-full p-6 space-y-4 h-full flex flex-col">
       <div className="flex justify-between items-center">
-        <CardTitle className="text-lg font-semibold">
-          📄 Lesson Output
-        </CardTitle>
+        <CardTitle className="text-xl font-bold">📄 Lesson Output</CardTitle>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <Switch checked={editMode} onCheckedChange={setEditMode} />
