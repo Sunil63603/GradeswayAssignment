@@ -45,7 +45,7 @@ export default function LessonForm({ onGenerate }) {
   };
 
   return (
-    <Card className="w-full h-full max-w-full p-6 space-y-4 overflow-y-auto overflow-x-hidden no-scrollbar  rounded-md shadow-inner">
+    <Card className="w-full h-full max-w-full p-6 space-y-4 overflow-y-auto overflow-x-hidden no-scrollbar  rounded-xl shadow-inner">
       <CardTitle className="text-xl font-bold">✏️ Create Lesson Plan</CardTitle>
 
       <div className="space-y-4">

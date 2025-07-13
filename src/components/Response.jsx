@@ -30,8 +30,6 @@ export default function ResponsePane({
   openSections,
   setOpenSections,
 }) {
-  const printRef = useRef();
-
   return (
     <Card className="w-full p-6 space-y-4 h-full flex flex-col">
       <div className="flex justify-between items-center">
@@ -41,20 +39,13 @@ export default function ResponsePane({
             <Switch checked={editMode} onCheckedChange={setEditMode} />
             <span>Edit Mode</span>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onDownload(printRef)}
-          >
+          <Button variant="outline" size="sm" onClick={() => onDownload()}>
             Download as PDF
           </Button>
         </div>
       </div>
 
-      <div
-        className="flex-1 overflow-y-auto max-w-full bg-muted/40 p-4 rounded-md shadow-inner no-scrollbar"
-        ref={printRef}
-      >
+      <div className="flex-1 overflow-y-auto max-w-full bg-muted/40 p-4 rounded-md shadow-inner no-scrollbar">
         <Accordion
           type="multiple"
           value={openSections}

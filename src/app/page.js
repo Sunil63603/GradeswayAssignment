@@ -5,6 +5,7 @@ import ResponsePane from "@/components/Response";
 import { useState } from "react";
 // import { generateLesson } from "@/lib/generateLesson";
 import { generateSection } from "@/lib/generateLesson";
+import jsPDF from "jspdf";
 
 //reuse this array in Response.jsx file as well
 export const sections = [
@@ -116,8 +117,82 @@ export default function Home() {
     }
   };
 
-  const handleDownload = (ref) => {
-    // window.print(); // placeholder logic for now
+  const handleDownload = () => {
+    if (!formInputs?.topic || !result) {
+      alert("Please generate a lesson plan first");
+      return;
+    }
+
+    // Defer execution to allow layout/styling to settle
+    setTimeout(() => {
+      const doc = new jsPDF("p", "pt", "a4");
+      const pageHeight = doc.internal.pageSize.height;
+      const pageWidth = doc.internal.pageSize.width;
+      const margin = 40;
+      const lineHeight = 18;
+      const sectionGap = 30;
+      const maxWidth = pageWidth - margin * 2;
+
+      let y = margin;
+      let page = 1;
+
+      const addFooter = () => {
+        doc.setFontSize(10);
+        doc.setTextColor("#888");
+        doc.text(`Page ${page}`, pageWidth / 2, pageHeight - 10, {
+          align: "center",
+        });
+      };
+
+      const addPageIfNeeded = (estimatedHeight = 0) => {
+        if (y + estimatedHeight > pageHeight - margin - 30) {
+          addFooter();
+          doc.addPage();
+          page++;
+          y = margin;
+        }
+      };
+
+      // Add Title
+      doc.setFontSize(18);
+      doc.setFont(undefined, "bold");
+      doc.text(formInputs.topic, margin, y);
+      y += sectionGap;
+
+      sections.forEach((sectionTitle) => {
+        const content = result[sectionTitle] || "No content available";
+        const lines = doc.splitTextToSize(content, maxWidth);
+        const contentHeight = lines.length * lineHeight;
+
+        // Check and break before heading + content
+        addPageIfNeeded(lineHeight + contentHeight);
+
+        // Section Title
+        doc.setFontSize(14);
+        doc.setFont(undefined, "bold");
+        doc.setTextColor("#2c2c2c");
+        doc.text(sectionTitle, margin, y);
+        y += lineHeight;
+
+        // Section Content
+        doc.setFontSize(12);
+        doc.setFont(undefined, "normal");
+        doc.setTextColor("#444");
+
+        lines.forEach((line) => {
+          addPageIfNeeded(lineHeight);
+          doc.text(line, margin, y);
+          y += lineHeight;
+        });
+
+        y += sectionGap;
+      });
+
+      addFooter();
+      doc.save(
+        `${formInputs.topic.replace(/[^a-z0-9]/gi, "_")}_lesson_plan.pdf`
+      );
+    }, 500); // slight delay to let layout/styling settle
   };
 
   return (
